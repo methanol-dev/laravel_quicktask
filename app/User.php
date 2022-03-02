@@ -40,4 +40,9 @@ class User extends Authenticatable
     protected $guarded = [
         'isAdmin',
     ];
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'user_id');
+    }
 }
