@@ -18,7 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 // Route resource users
-Route::resource('users', 'UserController');
+Route::resource('users', 'UserController')->middleware(['auth', 'admin']);
 
 // Route task
 
