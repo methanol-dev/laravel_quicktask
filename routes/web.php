@@ -31,3 +31,6 @@ Route::prefix('/task')->name('task.')->group(function () {
     Route::put('{task}', 'TaskController@update')->name('update');
     Route::delete('{task}', 'TaskController@destroy')->name('destroy');
 });
+
+// Route language
+Route::get('lang/{lang}', 'LanguageController@changeLanguage')->name('language');
