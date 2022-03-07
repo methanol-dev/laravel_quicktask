@@ -13,10 +13,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 // Route resource users
 Route::resource('users', 'UserController')->middleware(['auth', 'admin']);
 
@@ -34,3 +36,7 @@ Route::prefix('/task')->name('task.')->group(function () {
 
 // Route language
 Route::get('lang/{lang}', 'LanguageController@changeLanguage')->name('language');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
