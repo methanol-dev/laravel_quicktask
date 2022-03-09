@@ -4,8 +4,8 @@
 /storage/*.key
 /vendor
 /public/bower_components/*
-/public/css/app.css
-/public/js/app.js
+/public/css/*
+/public/js/*
 /public/mix-manifest.json
 .env
 .env.backup
