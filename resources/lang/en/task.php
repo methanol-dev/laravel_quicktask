@@ -10,4 +10,6 @@ return [
     'submit' => 'Submit',
     'add_task' => 'Add Task',
     'task' => 'task',
+    'show_task' => 'Show task',
+    'of' => 'of',
 ];

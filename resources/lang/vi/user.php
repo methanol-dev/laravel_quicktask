@@ -15,4 +15,5 @@ return [
     'password' => 'Mật khẩu',
     'submit' => 'Xác nhận',
     'add_user' => 'Thêm người dùng',
+    'show_user' => 'Hiển thị người dùng',
 ];

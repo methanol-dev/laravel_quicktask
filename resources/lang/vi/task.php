@@ -10,4 +10,6 @@ return [
     'submit' => 'Xác nhận',
     'add_task' => 'Thêm nhiệm vụ',
     'task' => 'Nhiệm vụ',
+    'show_task' => 'Hiển thị nhiệm vụ',
+    'of' => 'của',
 ];
