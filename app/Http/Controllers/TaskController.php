@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Task;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\CreateTaskRequest;
+use App\Http\Requests\UpdateTaskRequest;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -11,9 +17,25 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($user)
     {
-        return view('task.index');
+        $tasks = DB::table('users')
+            ->join('tasks',  'users.id', '=', 'tasks.user_id')
+            ->where('tasks.user_id', $user)
+            ->select(
+                'tasks.*',
+                'users.first_name',
+                'users.last_name',
+            )
+            ->paginate(config('constants.pagination'));
+
+        $tasks->user_id = $user;
+
+        foreach ($tasks->items() as $task) {
+            $task->full_name = $task->first_name . ' ' . $task->last_name;
+        }
+
+        return view('task.index', compact('tasks', 'user'));
     }
 
     /**
@@ -21,9 +43,9 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($user)
     {
-        return view('task.add');
+        return view('task.add', compact('user'));
     }
 
     /**
@@ -32,9 +54,20 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateTaskRequest $request, $user)
     {
-        //
+        $request->flash();
+
+        DB::table('tasks')->insert(
+            array_merge(
+                $request->only(['name', 'description']),
+                [
+                    'user_id' => $user,
+                ]
+            )
+        );
+
+        return redirect()->route('task.index', ['user' => $user]);
     }
 
     /**
@@ -43,9 +76,11 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($task, $user)
     {
-        //
+        $task = DB::table('tasks')->find($task);
+
+        return view('task.show', compact('user', 'task'));
     }
 
     /**
@@ -54,9 +89,11 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($task, $user)
     {
-        return view('task.edit');
+        $task = DB::table('tasks')->find($task);
+
+        return view('task.edit', compact('task', 'user'));
     }
 
     /**
@@ -66,9 +103,17 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateTaskRequest $request, $task, $user)
     {
-        //
+        DB::table('tasks')
+            ->where('id', $task)
+            ->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'isDone' => $request->isDone ? Task::IS_DONE : Task::IS_NOT_DONE,
+            ]);
+
+        return redirect()->route('task.index', ['user' => $user]);
     }
 
     /**
@@ -77,8 +122,10 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($task, $user)
     {
-        //
+        DB::table('tasks')->where('id', $task)->delete();
+
+        return redirect()->route('task.index', ['user' => $user]);
     }
 }

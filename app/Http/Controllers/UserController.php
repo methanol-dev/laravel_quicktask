@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\User;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -13,7 +17,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('user.index');
+        $listUser = User::paginate(config('constants.pagination'));
+
+        return view('user.index', compact('listUser'));
     }
 
     /**
@@ -32,9 +38,19 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateUserRequest $request)
     {
-        //
+        $user = new User();
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->email = $request->email;
+        $user->username = $request->username;
+        $user->password = bcrypt($request->password);
+        $user->isAdmin = $request->isAdmin ? User::IS_ADMIN : User::IS_NOT_ADMIN;
+        $user->isActive = $request->isActive ? User::IS_ACTIVE : User::IS_NOT_ACTIVE;
+        $user->save();
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -45,7 +61,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+       $user = User::find($id);
+
+       return view('user.show', compact('user'));
     }
 
     /**
@@ -56,7 +74,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        return view('user.edit');
+        $user = User::findOrFail($id);
+
+        return view('user.edit', compact('user'));
     }
 
     /**
@@ -66,9 +86,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        //
+        $user = User::find($id);
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->isAdmin = $request->isAdmin ? User::IS_ADMIN : User::IS_NOT_ADMIN;
+        $user->isActive = $request->isActive ? User::IS_ACTIVE : User::IS_NOT_ACTIVE;
+        $user->save();
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -79,6 +106,21 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+
+        try {
+            DB::beginTransaction();
+
+            $user->tasks()->delete();
+            $user->delete();
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            throw $th;
+        }
+        
+        return redirect()->route('users.index');
     }
 }

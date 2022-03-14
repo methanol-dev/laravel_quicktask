@@ -14,17 +14,17 @@
 <body>
     <div class="flex-center position-ref full-height">
         @if (Route::has('login'))
-        <div class="top-right links">
-            @auth
-            <a href="{{ route('home') }}">{{ trans('home.home') }}</a>
-            @else
-            <a href="{{ route('login') }}">{{ trans('home.login') }}</a>
+            <div class="top-right links">
+                @auth
+                    <a href="{{ route('home') }}">{{ trans('home.home') }}</a>
+                @else
+                    <a href="{{ route('login') }}">{{ trans('home.login') }}</a>
 
-            @if (Route::has('register'))
-            <a href="{{ route('register') }}">{{ trans('home.register') }}</a>
-            @endif
-            @endauth
-        </div>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}">{{ trans('home.register') }}</a>
+                    @endif
+                @endauth
+            </div>
         @endif
 
         <div class="content">

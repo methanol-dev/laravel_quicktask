@@ -25,13 +25,13 @@ Route::resource('users', 'UserController')->middleware(['auth', 'admin']);
 // Route task
 
 Route::prefix('/task')->name('task.')->group(function () {
-    Route::get('/', 'TaskController@index')->name('index');
-    Route::get('create', 'TaskController@create')->name('create');
-    Route::post('/', 'TaskController@store')->name('store');
-    Route::get('{task}', 'TaskController@show')->name('show');
-    Route::get('{task}/edit', 'TaskController@edit')->name('edit');
-    Route::put('{task}', 'TaskController@update')->name('update');
-    Route::delete('{task}', 'TaskController@destroy')->name('destroy');
+    Route::get('/{user}', 'TaskController@index')->name('index');
+    Route::get('create/{user}', 'TaskController@create')->name('create');
+    Route::post('/{user}', 'TaskController@store')->name('store');
+    Route::get('{task}/{user}', 'TaskController@show')->name('show');
+    Route::get('{task}/{user}/edit', 'TaskController@edit')->name('edit');
+    Route::put('{task}/{user}', 'TaskController@update')->name('update');
+    Route::delete('{task}/{user}', 'TaskController@destroy')->name('destroy');
 });
 
 // Route language

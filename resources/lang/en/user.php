@@ -15,4 +15,5 @@ return [
     'password' => 'Password',
     'submit' => 'Submit',
     'add_user' => 'Add user',
+    'show_user' => 'Show user',
 ];
